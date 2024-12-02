@@ -1,0 +1,44 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
+  port: ${PORT:8080}
+  error:
+    include-message: always
+  forward-headers-strategy: FRAMEWORK
+spring:
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  jmx:
+    enabled: false
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd HH:mm:ss
+      time: HH:mm:ss
+
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    out-of-order: true
+  threads:
+    virtual:
+      enabled: true
+
+
+application:
+  web:
+    cors:
+      allowed-origins:
+        - "http://127.0.0.1:5173"
+        - "http://127.0.0.1:5174"
+        - "http://localhost"
+        - "http://localhost:8000"
+  version: "1.0.0"
