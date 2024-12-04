@@ -24,8 +24,12 @@ public class ChatController {
     public void processMessage(
             @Payload ChatMessage chatMessage
     ) {
-        var chatId = chatRoomService
-                .getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);
+        var chatId = chatRoomService.getChatId(
+                chatMessage.getSenderId(),
+                chatMessage.getRecipientId(),
+                true
+        );
+
         chatMessage.setChatId(chatId.get());
 
         ChatMessage saved = chatMessageService.save(chatMessage);
@@ -44,7 +48,8 @@ public class ChatController {
     @GetMapping("/messages/{senderId}/{recipientId}/count")
     public ResponseEntity<Long> countNewMessages(
             @PathVariable String senderId,
-            @PathVariable String recipientId) {
+            @PathVariable String recipientId
+    ) {
 
         return ResponseEntity
                 .ok(chatMessageService.countNewMessages(senderId, recipientId));
