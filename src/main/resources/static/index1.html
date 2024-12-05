@@ -3,22 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <title>WebSocket Chat Client</title>
-
-    <!-- ImportMap для использования @stomp/stompjs -->
-    <script type="importmap">
-        {
-          "imports": {
-            "@stomp/stompjs": "https://ga.jspm.io/npm:@stomp/stompjs@7.0.0/esm6/index.js"
-          }
-        }
-    </script>
-    <script
-            async
-            src="https://ga.jspm.io/npm:es-module-shims@1.5.1/dist/es-module-shims.js"
-            crossorigin="anonymous"
-    ></script>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -89,9 +76,7 @@
     </div>
 </div>
 
-<script type="module">
-    import { Client } from '@stomp/stompjs';
-
+<script>
     let stompClient = null;
     let userId = null;
     let authToken = null;
@@ -115,26 +100,24 @@
     });
 
     function connect() {
-        stompClient = new Client({
-            brokerURL: 'ws://localhost:8080/ws', // Замените на ваш WebSocket URL
-            connectHeaders: {
-                Authorization: `Bearer ${authToken}`
-            },
-            onConnect: () => {
+        const socket = new SockJS('/ws'); // Замените '/ws' на ваш эндпоинт WebSocket
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect(
+            { Authorization: `Bearer ${authToken}` }, // Добавление токена авторизации
+            () => {
                 logMessage(`Подключен как ${userId}`);
                 stompClient.subscribe(`/users/queue/messages`, onMessageReceived);
             },
-            onStompError: (error) => {
-                logMessage(`Ошибка подключения: ${error}`);
+            (error) => {
+                logMessage('Ошибка подключения: ' + error);
             }
-        });
-
-        stompClient.activate();
+        );
     }
 
     function onMessageReceived(payload) {
         const message = JSON.parse(payload.body);
-        logMessage(`Получено сообщение: ${JSON.stringify(message, null, 2)}`);
+        logMessage('Получено сообщение: ' + JSON.stringify(message, null, 2));
     }
 
     document.getElementById('message-form').addEventListener('submit', (event) => {
@@ -143,8 +126,8 @@
 
         try {
             const parsedMessage = JSON.parse(message);
-            stompClient.publish({ destination: "/app/chat", body: JSON.stringify(parsedMessage) });
-            logMessage(`Отправлено сообщение: ${JSON.stringify(parsedMessage, null, 2)}`);
+            stompClient.send("/app/chat", {}, JSON.stringify(parsedMessage));
+            logMessage('Отправлено сообщение: ' + JSON.stringify(parsedMessage, null, 2));
         } catch (e) {
             logMessage('Ошибка отправки: некорректный JSON');
         }
@@ -152,7 +135,7 @@
 
     document.getElementById('disconnect').addEventListener('click', () => {
         if (stompClient) {
-            stompClient.deactivate();
+            stompClient.disconnect();
             logMessage('Отключено');
         }
         chatPage.classList.add('hidden');
