@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.controller;
 
+import ru.sirius.concordia.auth.model.security.rule.UserAuthenticationToken;
 import ru.sirius.concordia.chat.model.ChatMessage;
 import ru.sirius.concordia.chat.model.ChatNotification;
 import ru.sirius.concordia.chat.service.ChatMessageService;
@@ -12,6 +13,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.access.AccessDeniedException;
+
+import java.security.Principal;
 
 @Controller
 public class ChatController {
@@ -22,8 +26,21 @@ public class ChatController {
 
     @MessageMapping("/chat")
     public void processMessage(
-            @Payload ChatMessage chatMessage
+            @Payload ChatMessage chatMessage,
+            Principal principal
     ) {
+
+        if (
+                !chatMessage.getSenderId().equals(
+                        ((UserAuthenticationToken) principal)
+                                .getPrincipal()
+                                .getUserId()
+                                .toString()
+                )
+        ) {
+            throw new AccessDeniedException("You are not authorized to send messages to this recipient.");
+        }
+
         var chatId = chatRoomService.getChatId(
                 chatMessage.getSenderId(),
                 chatMessage.getRecipientId(),

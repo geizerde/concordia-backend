@@ -34,12 +34,14 @@ public class WebSecurityConfig {
                 .securityMatcher("/**").
                 authorizeHttpRequests(
                         (authorize) -> authorize
+                                .requestMatchers("/ws/**").permitAll()
                                 .requestMatchers("/register").permitAll()
                                 .requestMatchers("/login").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole(
                                         String.valueOf(RoleCode.ADMIN)
                                 )
                                 .requestMatchers("/api/**").authenticated()
+                                .requestMatchers("/**").authenticated()
                 );
 
         return http.build();
