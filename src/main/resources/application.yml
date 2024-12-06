@@ -13,11 +13,19 @@ server:
   error:
     include-message: always
   forward-headers-strategy: FRAMEWORK
+
 spring:
   data:
     web:
       pageable:
         one-indexed-parameters: true
+    mongodb:
+      username: ${ME_CONFIG_MONGODB_ADMINUSERNAME}
+      password: ${ME_CONFIG_MONGODB_ADMINPASSWORD}
+      host: ${ME_CONFIG_MONGODB_HOST}
+      port: ${ME_CONFIG_MONGODB_PORT}
+      database: ${ME_CONFIG_MONGODB_DATABASE}
+      authentication-database: ${ME_CONFIG_MONGODB_AUTHENTICATION_DATABASE}
   jmx:
     enabled: false
   mvc:
@@ -48,6 +56,8 @@ application:
     cors:
       allowed-origins:
         - "http://127.0.0.1:5173"
+        - "http://127.0.0.1:27017"
+        - "http://127.0.0.1:8081"
         - "http://127.0.0.1:5174"
         - "http://localhost"
         - "http://localhost:8000"

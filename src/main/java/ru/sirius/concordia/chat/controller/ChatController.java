@@ -1,0 +1,91 @@
+package ru.sirius.concordia.chat.controller;
+
+import ru.sirius.concordia.auth.model.security.rule.UserAuthenticationToken;
+import ru.sirius.concordia.chat.model.ChatMessage;
+import ru.sirius.concordia.chat.model.ChatNotification;
+import ru.sirius.concordia.chat.service.ChatMessageService;
+import ru.sirius.concordia.chat.service.ChatRoomService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.access.AccessDeniedException;
+
+import java.security.Principal;
+
+@Controller
+public class ChatController {
+
+    @Autowired private SimpMessagingTemplate messagingTemplate;
+    @Autowired private ChatMessageService chatMessageService;
+    @Autowired private ChatRoomService chatRoomService;
+
+    @MessageMapping("/chat")
+    public void processMessage(
+            @Payload ChatMessage chatMessage,
+            Principal principal
+    ) {
+
+        if (
+                !chatMessage.getSenderId().equals(
+                        ((UserAuthenticationToken) principal)
+                                .getPrincipal()
+                                .getUserId()
+                                .toString()
+                )
+        ) {
+            throw new AccessDeniedException("You are not authorized to send messages to this recipient.");
+        }
+
+        var chatId = chatRoomService.getChatId(
+                chatMessage.getSenderId(),
+                chatMessage.getRecipientId(),
+                true
+        );
+
+        chatMessage.setChatId(chatId.get());
+
+        ChatMessage saved = chatMessageService.save(chatMessage);
+
+        messagingTemplate.convertAndSendToUser(
+                chatMessage.getRecipientId(),
+                "/queue/messages",
+                new ChatNotification(
+                        saved.getId(),
+                        saved.getSenderId(),
+                        saved.getSenderName()
+                )
+        );
+    }
+
+    @GetMapping("/messages/{senderId}/{recipientId}/count")
+    public ResponseEntity<Long> countNewMessages(
+            @PathVariable String senderId,
+            @PathVariable String recipientId
+    ) {
+
+        return ResponseEntity
+                .ok(chatMessageService.countNewMessages(senderId, recipientId));
+    }
+
+    @GetMapping("/messages/{senderId}/{recipientId}")
+    public ResponseEntity<?> findChatMessages (
+            @PathVariable String senderId,
+            @PathVariable String recipientId
+    ) {
+        return ResponseEntity
+                .ok(chatMessageService.findChatMessages(senderId, recipientId));
+    }
+
+    @GetMapping("/messages/{id}")
+    public ResponseEntity<?> findMessage (
+            @PathVariable String id
+    ) {
+        return ResponseEntity
+                .ok(chatMessageService.findById(id));
+    }
+}

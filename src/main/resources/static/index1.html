@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <title>WebSocket Chat Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<!-- Страница ввода userID -->
+<div id="user-page" class="container">
+    <h2>Введите ваш userID</h2>
+    <form id="user-form">
+        <div class="form-group">
+            <label for="userId">Ваш userID:</label>
+            <input type="text" id="userId" required>
+        </div>
+        <div class="form-group">
+            <label for="authToken">Токен авторизации:</label>
+            <input type="text" id="authToken" placeholder="Введите токен">
+        </div>
+        <button type="submit">Подключиться</button>
+    </form>
+</div>
+
+<!-- Страница отправки сообщений -->
+<div id="chat-page" class="container hidden">
+    <h2>Отправка сообщений</h2>
+    <form id="message-form">
+        <div class="form-group">
+            <label for="message">Сообщение (JSON):</label>
+            <textarea id="message" rows="10">
+{
+    "id": "2",
+    "chatId": "chat123",
+    "senderId": "user002",
+    "recipientId": "user001",
+    "senderName": "Bob",
+    "recipientName": "Alice",
+    "content": "Hey Alice, I'm doing well! How about you?",
+    "timestamp": "2024-12-02T21:31:45.123+03:00",
+    "status": "RECEIVED"
+}
+            </textarea>
+        </div>
+        <button type="submit">Отправить</button>
+    </form>
+    <button id="disconnect">Отключиться</button>
+    <div id="logs" style="margin-top: 20px;">
+        <h3>Логи</h3>
+        <div id="log-area" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;"></div>
+    </div>
+</div>
+
+<script>
+    let stompClient = null;
+    let userId = null;
+    let authToken = null;
+
+    const userPage = document.getElementById('user-page');
+    const chatPage = document.getElementById('chat-page');
+    const logs = document.getElementById('log-area');
+
+    document.getElementById('user-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        userId = document.getElementById('userId').value.trim();
+        authToken = document.getElementById('authToken').value.trim();
+
+        if (userId && authToken) {
+            userPage.classList.add('hidden');
+            chatPage.classList.remove('hidden');
+            connect();
+        } else {
+            alert('Введите userID и токен авторизации!');
+        }
+    });
+
+    function connect() {
+        const socket = new SockJS('/ws'); // Замените '/ws' на ваш эндпоинт WebSocket
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect(
+            { Authorization: `Bearer ${authToken}` }, // Добавление токена авторизации
+            () => {
+                logMessage(`Подключен как ${userId}`);
+                stompClient.subscribe(`/users/queue/messages`, onMessageReceived);
+            },
+            (error) => {
+                logMessage('Ошибка подключения: ' + error);
+            }
+        );
+    }
+
+    function onMessageReceived(payload) {
+        const message = JSON.parse(payload.body);
+        logMessage('Получено сообщение: ' + JSON.stringify(message, null, 2));
+    }
+
+    document.getElementById('message-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const message = document.getElementById('message').value.trim();
+
+        try {
+            const parsedMessage = JSON.parse(message);
+            stompClient.send("/app/chat", {}, JSON.stringify(parsedMessage));
+            logMessage('Отправлено сообщение: ' + JSON.stringify(parsedMessage, null, 2));
+        } catch (e) {
+            logMessage('Ошибка отправки: некорректный JSON');
+        }
+    });
+
+    document.getElementById('disconnect').addEventListener('click', () => {
+        if (stompClient) {
+            stompClient.disconnect();
+            logMessage('Отключено');
+        }
+        chatPage.classList.add('hidden');
+        userPage.classList.remove('hidden');
+    });
+
+    function logMessage(message) {
+        const logItem = document.createElement('div');
+        logItem.textContent = message;
+        logs.appendChild(logItem);
+        logs.scrollTop = logs.scrollHeight;
+    }
+</script>
+</body>
+</html>
