@@ -123,6 +123,7 @@
             onConnect: () => {
                 logMessage(`Подключен как ${userId}`);
                 stompClient.subscribe(`/users/queue/messages`, onMessageReceived);
+                stompClient.subscribe(`/users/queue/errors`, onMessageReceived);
             },
             onStompError: (error) => {
                 logMessage(`Ошибка подключения: ${error}`);
