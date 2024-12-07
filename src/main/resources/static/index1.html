@@ -108,6 +108,7 @@
             () => {
                 logMessage(`Подключен как ${userId}`);
                 stompClient.subscribe(`/users/queue/messages`, onMessageReceived);
+                stompClient.subscribe(`/users/queue/errors`, onMessageReceived);
             },
             (error) => {
                 logMessage('Ошибка подключения: ' + error);
@@ -117,6 +118,7 @@
 
     function onMessageReceived(payload) {
         const message = JSON.parse(payload.body);
+        console.log(payload);
         logMessage('Получено сообщение: ' + JSON.stringify(message, null, 2));
     }
 
