@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import ru.sirius.concordia.core.model.dto.data.CountDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +27,18 @@ public class ChatMessageService {
         return chatMessage;
     }
 
-    public long countNewMessages(
+    public CountDTO countNewMessages(
             String senderId,
             String recipientId
     ) {
-        return repository.countBySenderIdAndRecipientIdAndStatus(
-                senderId,
-                recipientId,
-                MessageStatus.RECEIVED
-        );
+        return CountDTO.builder()
+                .count(
+                        repository.countBySenderIdAndRecipientIdAndStatus(
+                                senderId,
+                                recipientId,
+                                MessageStatus.RECEIVED
+                        )
+                ).build();
     }
 
     public List<ChatMessage> findChatMessages(
