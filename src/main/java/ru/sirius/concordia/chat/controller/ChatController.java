@@ -1,26 +1,24 @@
 package ru.sirius.concordia.chat.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.sirius.concordia.auth.model.security.rule.UserAuthenticationToken;
 import ru.sirius.concordia.chat.model.ChatMessage;
 import ru.sirius.concordia.chat.model.ChatNotification;
 import ru.sirius.concordia.chat.service.ChatMessageService;
 import ru.sirius.concordia.chat.service.ChatRoomService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.security.access.AccessDeniedException;
-
 import ru.sirius.concordia.core.model.dto.data.CountDTO;
+import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
-import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
-import ru.sirius.concordia.user.model.User;
 
 import java.security.Principal;
 import java.util.List;
