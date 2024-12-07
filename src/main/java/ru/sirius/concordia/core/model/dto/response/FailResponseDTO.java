@@ -1,17 +1,19 @@
 package ru.sirius.concordia.core.model.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lombok.Builder.Default;
 
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 public class FailResponseDTO extends AbstractResponseDTO {
-    private final String message;
+    @Default
+    protected final boolean status =
+            ResponseDTOInterface.FAILURE;
 
-    private FailResponseDTO(String message) {
-        super(ResponseDTOInterface.FAILURE);
-        this.message = message;
-    }
+    protected final String message;
 }

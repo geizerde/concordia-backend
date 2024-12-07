@@ -1,16 +1,14 @@
 package ru.sirius.concordia.core.model.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
 public abstract class AbstractResponseDTO implements ResponseDTOInterface {
-    private final boolean status;
-
-    protected AbstractResponseDTO(boolean status) {
-        this.status = status;
-    }
+    protected final boolean status;
 
     @Override
     public boolean getStatus() {
