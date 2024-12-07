@@ -1,7 +1,7 @@
-package ru.sirius.concordia.auth.model.repository.api;
+package ru.sirius.concordia.user.repository;
 
-import ru.sirius.concordia.auth.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import ru.sirius.concordia.user.model.User;
 
 import java.util.Optional;
 

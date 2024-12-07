@@ -1,12 +1,12 @@
-package ru.sirius.concordia.auth.service;
+package ru.sirius.concordia.user.service;
 
-import ru.sirius.concordia.auth.model.dto.entity.UserDTO;
-import ru.sirius.concordia.auth.model.entity.Role;
-import ru.sirius.concordia.auth.model.entity.User;
-import ru.sirius.concordia.auth.model.repository.api.UserRepositoryInterface;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.sirius.concordia.user.model.dto.UserDTO;
+import ru.sirius.concordia.user.model.Role;
+import ru.sirius.concordia.user.model.User;
+import ru.sirius.concordia.user.repository.UserRepositoryInterface;
 
 @Service
 @AllArgsConstructor

@@ -1,10 +1,10 @@
-package ru.sirius.concordia.auth.model.dto.entity;
+package ru.sirius.concordia.user.model.dto;
 
-import ru.sirius.concordia.auth.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.sirius.concordia.user.model.Role;
 
 @Data
 @Builder

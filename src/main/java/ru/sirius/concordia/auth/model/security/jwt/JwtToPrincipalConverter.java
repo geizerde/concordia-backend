@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class JwtToPrincipalConverter {
 
-
     public UserPrincipal convertToUserPrincipal(DecodedJWT jwt) {
         return UserPrincipal.builder()
                 .userId(Long.valueOf(jwt.getSubject()))

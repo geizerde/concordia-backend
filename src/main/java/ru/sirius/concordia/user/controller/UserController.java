@@ -1,35 +1,33 @@
-package ru.sirius.concordia.auth.controller;
+package ru.sirius.concordia.user.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.sirius.concordia.auth.model.dto.request.AuthRequestDTO;
-import ru.sirius.concordia.auth.model.dto.response.AuthResponseDTO;
-import ru.sirius.concordia.auth.service.AuthService;
-import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
+import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
+import ru.sirius.concordia.user.model.User;
+import ru.sirius.concordia.user.model.dto.UserDTO;
+import ru.sirius.concordia.user.service.UserService;
 
 @RestController
 @AllArgsConstructor
-public class AuthController {
-    private final AuthService authService;
+public class UserController {
+    private final UserService userService;
 
-    @PostMapping("/login")
-    public ResponseEntity<ResponseDTOInterface> login(
-            @RequestBody @Validated AuthRequestDTO request
+    @PostMapping("/user")
+    public ResponseEntity<ResponseDTOInterface> create(
+            @RequestBody UserDTO userDTO
     ) {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<AuthResponseDTO>builder()
+                    SuccessResponseDTO.<User>builder()
                             .data(
-                                    authService.attemptLogin(
-                                            request.getNickname(),
-                                            request.getPassword()
+                                    userService.create(
+                                            userDTO
                                     )
                             )
                             .build()

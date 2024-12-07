@@ -1,4 +1,4 @@
-package ru.sirius.concordia.auth.model.entity;
+package ru.sirius.concordia.user.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
