@@ -19,9 +19,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String nickname;
-
     @Column(nullable = false)
     private String name;
 

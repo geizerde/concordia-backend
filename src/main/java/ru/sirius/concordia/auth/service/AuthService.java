@@ -21,8 +21,8 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponseDTO attemptLogin(String nickname, String password) {
-        var authentication = getAuthentication(nickname, password);
+    public AuthResponseDTO attemptLogin(String email, String password) {
+        var authentication = getAuthentication(email, password);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -35,9 +35,9 @@ public class AuthService {
                 .build();
     }
 
-    private Authentication getAuthentication(String nickname, String password) {
+    private Authentication getAuthentication(String email, String password) {
         return authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(nickname, password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
     }
 
@@ -45,7 +45,7 @@ public class AuthService {
         return jwtProcessor.encode(
                 JwtProcessor.Request.builder()
                         .userId(userPrincipal.getUserId())
-                        .nickname(userPrincipal.getUsername())
+                        .email(userPrincipal.getUsername())
                         .authorities(
                                 convertCollectionAuthsToListString(userPrincipal.getAuthorities())
                         )

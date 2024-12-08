@@ -21,15 +21,14 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public User findByNickname(String nickname) {
-        return userRepository.findByNickname(nickname).orElseThrow(
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("User is not found")
         );
     }
 
     public User create(UserDTO userDTO, Role.Code roleCode) {
         User user = User.builder()
-                .nickname(userDTO.getNickname())
                 .name(userDTO.getName())
                 .isActive(userDTO.getIsActive())
                 .phone(userDTO.getPhone())

@@ -13,8 +13,6 @@ import ru.sirius.concordia.user.model.Role;
 public class UserDTO {
     protected Long id;
 
-    protected String nickname;
-
     protected String name;
 
     protected String password;

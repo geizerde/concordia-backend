@@ -86,7 +86,6 @@ public class DataLoader implements ApplicationRunner {
     private void createAdminUser() {
         userService.create(
                 UserDTO.builder()
-                        .nickname("Admin")
                         .password("123")
                         .name("Administrator")
                         .phone("+1234567890")

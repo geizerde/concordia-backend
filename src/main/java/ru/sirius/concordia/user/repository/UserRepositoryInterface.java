@@ -6,5 +6,5 @@ import ru.sirius.concordia.user.model.User;
 import java.util.Optional;
 
 public interface UserRepositoryInterface extends JpaRepository<User, Long> {
-    Optional<User> findByNickname(String nickname);
+    Optional<User> findByEmail(String email);
 }

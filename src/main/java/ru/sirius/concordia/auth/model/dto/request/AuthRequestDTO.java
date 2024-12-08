@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class AuthRequestDTO {
-    private String nickname;
+    private String email;
 
     private String password;
 }
