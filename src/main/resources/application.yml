@@ -1,3 +1,7 @@
+photo:
+  storage:
+    path: uploads/users
+
 security:
   auth:
     user:
