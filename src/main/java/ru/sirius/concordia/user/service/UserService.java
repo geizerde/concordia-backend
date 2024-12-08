@@ -30,6 +30,11 @@ public class UserService {
     public User create(UserDTO userDTO, Role.Code roleCode) {
         User user = User.builder()
                 .nickname(userDTO.getNickname())
+                .name(userDTO.getName())
+                .isActive(userDTO.getIsActive())
+                .phone(userDTO.getPhone())
+                .email(userDTO.getEmail())
+                .age(userDTO.getAge())
                 .city(
                         cityService.findById(
                                 userDTO.getCityId()

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.sirius.concordia.user.model.Role;
-import ru.sirius.concordia.user.model.location.City;
 
 @Data
 @Builder
@@ -16,7 +15,19 @@ public class UserDTO {
 
     protected String nickname;
 
+    protected String name;
+
     protected String password;
+
+    protected String email;
+
+    protected String phone;
+
+    protected String description;
+
+    protected Integer age;
+
+    protected Boolean isActive;
 
     protected Role.Code roleCode;
 

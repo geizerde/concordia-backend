@@ -22,9 +22,27 @@ public class User {
     @Column(unique = true, nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
+    private String name;
+
     @JsonIgnore
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private Boolean isActive;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column
+    private String description;
+
+    @Column(nullable = false)
+    private Integer age;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
@@ -33,4 +51,11 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
+
+    @PrePersist
+    public void prePersist() {
+        if (isActive == null) {
+            isActive = true;
+        }
+    }
 }

@@ -88,6 +88,10 @@ public class DataLoader implements ApplicationRunner {
                 UserDTO.builder()
                         .nickname("Admin")
                         .password("123")
+                        .name("Administrator")
+                        .phone("+1234567890")
+                        .email("admin@example.com")
+                        .age(30)
                         .cityId(1L)
                         .build(),
                 Role.Code.ROLE_ADMIN
