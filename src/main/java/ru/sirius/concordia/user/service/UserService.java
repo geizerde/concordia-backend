@@ -7,10 +7,13 @@ import ru.sirius.concordia.user.model.dto.UserDTO;
 import ru.sirius.concordia.user.model.Role;
 import ru.sirius.concordia.user.model.User;
 import ru.sirius.concordia.user.repository.UserRepositoryInterface;
+import ru.sirius.concordia.user.service.location.CityService;
 
 @Service
 @AllArgsConstructor
 public class UserService {
+
+    private final CityService cityService;
 
     private final UserRepositoryInterface userRepository;
 
@@ -27,6 +30,11 @@ public class UserService {
     public User create(UserDTO userDTO, Role.Code roleCode) {
         User user = User.builder()
                 .nickname(userDTO.getNickname())
+                .city(
+                        cityService.findById(
+                                userDTO.getCityId()
+                        )
+                )
                 .password(
                         passwordEncoder.encode(userDTO.getPassword())
                 )
