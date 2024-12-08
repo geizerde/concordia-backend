@@ -59,6 +59,14 @@ public class User {
     )
     private List<Photo> photos = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "users_tags",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
         if (isActive == null) {

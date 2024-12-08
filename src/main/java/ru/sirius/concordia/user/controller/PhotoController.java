@@ -9,7 +9,6 @@ import ru.sirius.concordia.auth.model.security.rule.UserAuthenticationToken;
 import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
-import ru.sirius.concordia.user.model.Photo;
 import ru.sirius.concordia.user.model.dto.PhotoDTO;
 import ru.sirius.concordia.user.service.PhotoService;
 
