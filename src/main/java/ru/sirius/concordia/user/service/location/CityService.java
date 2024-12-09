@@ -20,7 +20,7 @@ public class CityService {
         city.setName(cityDTO.getName());
         city.setRegion(
                 regionService.findById(
-                        cityDTO.getRegionId()
+                        cityDTO.getRegion().getId()
                 )
         );
 

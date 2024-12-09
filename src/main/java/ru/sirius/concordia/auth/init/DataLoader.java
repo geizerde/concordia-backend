@@ -1,6 +1,7 @@
 package ru.sirius.concordia.auth.init;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,16 @@ import java.util.List;
 public class DataLoader implements ApplicationRunner {
 
     private final RoleService roleService;
+
     private final UserService userService;
+
     private final CountryService countryService;
+
     private final RegionService regionService;
+
     private final CityService cityService;
+
+    private final ModelMapper modelMapper;
 
     private final List<RoleDTO> defaultRoles = List.of(
             new RoleDTO(null, "User Role", Role.Code.ROLE_USER),
@@ -69,14 +76,18 @@ public class DataLoader implements ApplicationRunner {
                     .filter(region -> region.getName().equals("Moscow Region") && country.getName().equals("Russia") ||
                             region.getName().equals("California") && country.getName().equals("United States"))
                     .forEach(region -> {
-                        region.setCountryId(savedCountry.getId());
+                        region.setCountry(
+                                modelMapper.map(savedCountry, CountryDTO.class)
+                        );
                         Region savedRegion = regionService.create(region);
 
                         defaultCities.stream()
                                 .filter(city -> city.getName().equals("Moscow") && region.getName().equals("Moscow Region") ||
                                         city.getName().equals("Los Angeles") && region.getName().equals("California"))
                                 .forEach(city -> {
-                                    city.setRegionId(savedRegion.getId());
+                                    city.setRegion(
+                                            modelMapper.map(savedRegion, RegionDTO.class)
+                                    );
                                     cityService.create(city);
                                 });
                     });
@@ -91,7 +102,12 @@ public class DataLoader implements ApplicationRunner {
                         .phone("+1234567890")
                         .email("admin@example.com")
                         .age(30)
-                        .cityId(1L)
+                        .city(
+                                modelMapper.map(
+                                        cityService.findAllByRegionId(1L).getFirst(),
+                                        CityDTO.class
+                                )
+                        )
                         .build(),
                 Role.Code.ROLE_ADMIN
         );

@@ -1,6 +1,7 @@
 package ru.sirius.concordia.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,8 +9,8 @@ import ru.sirius.concordia.auth.model.security.rule.UserAuthenticationToken;
 import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
-import ru.sirius.concordia.user.model.Tag;
-import ru.sirius.concordia.user.model.User;
+import ru.sirius.concordia.user.model.dto.TagDTO;
+import ru.sirius.concordia.user.model.dto.UserDTO;
 import ru.sirius.concordia.user.model.dto.request.UserTagsRequestDTO;
 import ru.sirius.concordia.user.service.TagService;
 
@@ -22,13 +23,22 @@ import java.util.List;
 public class TagController {
     private final TagService tagService;
 
+    private final ModelMapper modelMapper;
+
     @GetMapping
     public ResponseEntity<ResponseDTOInterface> getAllTags() {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<List<Tag>>builder()
+                    SuccessResponseDTO.<List<TagDTO>>builder()
                             .data(
-                                    tagService.getAllTags()
+                                    tagService.getAllTags().stream()
+                                            .map(
+                                                    tag -> modelMapper.map(
+                                                            tag,
+                                                            TagDTO.class
+                                                    )
+                                            )
+                                            .toList()
                             )
                             .build()
             );
@@ -44,13 +54,18 @@ public class TagController {
 
     @PostMapping
     public ResponseEntity<ResponseDTOInterface> createTag(
-            @RequestBody String name
+            @RequestBody TagDTO tag
     ) {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<Tag>builder()
+                    SuccessResponseDTO.<TagDTO>builder()
                             .data(
-                                    tagService.createTag(name)
+                                    modelMapper.map(
+                                            tagService.createTag(
+                                                    tag.getName()
+                                            ),
+                                            TagDTO.class
+                                    )
                             )
                             .build()
             );
@@ -71,13 +86,16 @@ public class TagController {
     ) {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<User>builder()
+                    SuccessResponseDTO.<UserDTO>builder()
                             .data(
-                                    tagService.addTagsToUser(
-                                            ((UserAuthenticationToken) principal)
-                                                    .getPrincipal()
-                                                    .getUserId(),
-                                            request.getTagIds()
+                                    modelMapper.map(
+                                            tagService.addTagsToUser(
+                                                    ((UserAuthenticationToken) principal)
+                                                            .getPrincipal()
+                                                            .getUserId(),
+                                                    request.getTagIds()
+                                            ),
+                                            UserDTO.class
                                     )
                             )
                             .build()
@@ -97,10 +115,26 @@ public class TagController {
             @PathVariable Long tagId
     ) {
         try {
+            tagService.getUsersByTagId(tagId).stream()
+                    .map(
+                            user -> modelMapper.map(
+                                    user,
+                                    UserDTO.class
+                            )
+                    )
+                    .toList();
+
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<List<User>>builder()
+                    SuccessResponseDTO.<List<UserDTO>>builder()
                             .data(
-                                    tagService.getUsersByTagId(tagId)
+                                    tagService.getUsersByTagId(tagId).stream()
+                                            .map(
+                                                    user -> modelMapper.map(
+                                                            user,
+                                                            UserDTO.class
+                                                    )
+                                            )
+                                            .toList()
                             )
                             .build()
             );

@@ -1,10 +1,15 @@
 package ru.sirius.concordia.user.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.sirius.concordia.user.model.Photo;
 import ru.sirius.concordia.user.model.Role;
+import ru.sirius.concordia.user.model.dto.location.CityDTO;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -15,6 +20,7 @@ public class UserDTO {
 
     protected String name;
 
+    @JsonIgnore
     protected String password;
 
     protected String email;
@@ -29,5 +35,9 @@ public class UserDTO {
 
     protected Role.Code roleCode;
 
-    protected Long cityId;
+    protected CityDTO city;
+
+    protected List<PhotoDTO> photos;
+
+    protected List<TagDTO> tags;
 }

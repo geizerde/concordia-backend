@@ -14,5 +14,5 @@ public class CityDTO {
 
     private String name;
 
-    private Long regionId;
+    private RegionDTO region;
 }

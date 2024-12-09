@@ -1,6 +1,7 @@
 package ru.sirius.concordia.user.controller;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,9 @@ import java.security.Principal;
 @AllArgsConstructor
 public class PhotoController {
 
-    private PhotoService photoService;
+    private final PhotoService photoService;
+
+    private final ModelMapper modelMapper;
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseDTOInterface> uploadPhoto(
@@ -37,12 +40,7 @@ public class PhotoController {
             return ResponseEntity.ok(
                     SuccessResponseDTO.<PhotoDTO>builder()
                             .data(
-                                    new PhotoDTO(
-                                            photo.getId(),
-                                            photo.getPath(),
-                                            photo.getIsAvatar(),
-                                            photo.getUser().getId()
-                                    )
+                                    modelMapper.map(photo, PhotoDTO.class)
                             )
                             .build()
             );
@@ -72,12 +70,7 @@ public class PhotoController {
             return ResponseEntity.ok(
                     SuccessResponseDTO.<PhotoDTO>builder()
                             .data(
-                                    new PhotoDTO(
-                                            avatar.getId(),
-                                            avatar.getPath(),
-                                            avatar.getIsAvatar(),
-                                            avatar.getUser().getId()
-                                    )
+                                    modelMapper.map(avatar, PhotoDTO.class)
                             )
                             .build()
             );

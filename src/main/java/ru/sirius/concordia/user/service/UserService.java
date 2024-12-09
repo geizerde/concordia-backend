@@ -39,7 +39,7 @@ public class UserService {
                 .age(userDTO.getAge())
                 .city(
                         cityService.findById(
-                                userDTO.getCityId()
+                                userDTO.getCity().getId()
                         )
                 )
                 .password(

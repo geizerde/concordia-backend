@@ -1,6 +1,7 @@
 package ru.sirius.concordia.user.controller;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
-import ru.sirius.concordia.user.model.location.City;
-import ru.sirius.concordia.user.model.location.Country;
-import ru.sirius.concordia.user.model.location.Region;
+import ru.sirius.concordia.user.model.dto.location.CityDTO;
+import ru.sirius.concordia.user.model.dto.location.CountryDTO;
+import ru.sirius.concordia.user.model.dto.location.RegionDTO;
 import ru.sirius.concordia.user.service.location.CityService;
 import ru.sirius.concordia.user.service.location.CountryService;
 import ru.sirius.concordia.user.service.location.RegionService;
@@ -29,13 +30,22 @@ public class LocationController {
 
     private final CityService cityService;
 
+    private final ModelMapper modelMapper;
+
     @GetMapping("/countries")
     public ResponseEntity<ResponseDTOInterface> getAllCountries() {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<List<Country>>builder()
+                    SuccessResponseDTO.<List<CountryDTO>>builder()
                             .data(
-                                    countryService.findAll()
+                                    countryService.findAll().stream()
+                                            .map(
+                                                    country -> modelMapper.map(
+                                                            country,
+                                                            CountryDTO.class
+                                                    )
+                                            )
+                                            .toList()
                             )
                             .build()
             );
@@ -55,9 +65,16 @@ public class LocationController {
     ) {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<List<Region>>builder()
+                    SuccessResponseDTO.<List<RegionDTO>>builder()
                             .data(
-                                    regionService.findAllByCountryId(countryId)
+                                    regionService.findAllByCountryId(countryId).stream()
+                                            .map(
+                                                    region -> modelMapper.map(
+                                                            region,
+                                                            RegionDTO.class
+                                                    )
+                                            )
+                                            .toList()
                             )
                             .build()
             );
@@ -77,9 +94,16 @@ public class LocationController {
     ) {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<List<City>>builder()
+                    SuccessResponseDTO.<List<CityDTO>>builder()
                             .data(
-                                    cityService.findAllByRegionId(regionId)
+                                    cityService.findAllByRegionId(regionId).stream()
+                                            .map(
+                                                    city -> modelMapper.map(
+                                                            city,
+                                                            CityDTO.class
+                                                    )
+                                            )
+                                            .toList()
                             )
                             .build()
             );

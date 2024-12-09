@@ -20,7 +20,7 @@ public class RegionService {
         region.setName(regionDTO.getName());
         region.setCountry(
                 countryService.findById(
-                        regionDTO.getCountryId()
+                        regionDTO.getCountry().getId()
                 )
         );
 
