@@ -1,6 +1,7 @@
 package ru.sirius.concordia.user.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,8 +32,10 @@ public class UserDTO {
 
     protected Integer age;
 
+    @JsonProperty("is_active")
     protected Boolean isActive;
 
+    @JsonProperty("role_code")
     protected Role.Code roleCode;
 
     protected CityDTO city;
