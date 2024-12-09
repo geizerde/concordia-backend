@@ -31,12 +31,11 @@ public class TagService {
     @Transactional
     public User addTagsToUser(Long userId, List<Long> tagIds) {
         User user = userRepository.findById(userId)
-                .orElseThrow(
-                        () -> new IllegalArgumentException("User not found")
-                );
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         List<Tag> tags = tagRepository.findAllById(tagIds);
 
+        user.getTags().clear();
         user.getTags().addAll(tags);
 
         return userRepository.save(user);
