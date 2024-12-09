@@ -6,25 +6,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
-@Table(name = "roles")
+@Table(name = "tags")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true)
-    private Code code;
-
-    public enum Code {
-        ROLE_ADMIN, ROLE_USER;
-    }
+    @ManyToMany(mappedBy = "tags")
+    private List<User> users;
 }

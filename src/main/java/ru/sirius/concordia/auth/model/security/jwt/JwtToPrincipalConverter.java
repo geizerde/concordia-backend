@@ -15,7 +15,7 @@ public class JwtToPrincipalConverter {
     public UserPrincipal convertToUserPrincipal(DecodedJWT jwt) {
         return UserPrincipal.builder()
                 .userId(Long.valueOf(jwt.getSubject()))
-                .username(jwt.getClaim(JwtProcessor.NICKNAME_CLAIM).asString())
+                .username(jwt.getClaim(JwtProcessor.EMAIL_CLAIM).asString())
                 .authorities(
                         convertListStringToListSimpleGrantedAuthority(
                                 getClaimOrEmptyList(jwt, JwtProcessor.AUTHORITIES_CLAIM)

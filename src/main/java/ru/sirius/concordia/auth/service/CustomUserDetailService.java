@@ -18,11 +18,11 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userService.findByNickname(username);
+        var user = userService.findByEmail(username);
 
         return UserPrincipal.builder()
                 .userId(user.getId())
-                .username(user.getNickname())
+                .username(user.getEmail())
                 .password(user.getPassword())
                 .authorities(List.of(new SimpleGrantedAuthority(
                         String.valueOf(user.getRole().getCode())

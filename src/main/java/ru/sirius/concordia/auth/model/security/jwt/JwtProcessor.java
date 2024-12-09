@@ -21,7 +21,7 @@ public class JwtProcessor {
 
     public static final String AUTHORITIES_CLAIM = "au";
 
-    public static final String NICKNAME_CLAIM = "nk";
+    public static final String EMAIL_CLAIM = "email";
 
     public String encode(Request request) {
         return JWT
@@ -29,7 +29,7 @@ public class JwtProcessor {
                 .withSubject(String.valueOf(request.getUserId()))
                 .withExpiresAt(Instant.now().plus(Duration.of(1, ChronoUnit.DAYS)))
                 .withClaim(AUTHORITIES_CLAIM, request.getAuthorities())
-                .withClaim(NICKNAME_CLAIM, request.getNickname())
+                .withClaim(EMAIL_CLAIM, request.getEmail())
                 .sign(Algorithm.HMAC256(jwtProperty.getSecretKey()));
     }
 
@@ -43,7 +43,7 @@ public class JwtProcessor {
     @Builder
     public static class Request {
         private final Long userId;
-        private final String nickname;
+        private final String email;
         private final List<String> authorities;
     }
 }

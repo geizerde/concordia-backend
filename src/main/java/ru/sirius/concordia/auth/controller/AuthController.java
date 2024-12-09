@@ -28,7 +28,7 @@ public class AuthController {
                     SuccessResponseDTO.<AuthResponseDTO>builder()
                             .data(
                                     authService.attemptLogin(
-                                            request.getNickname(),
+                                            request.getEmail(),
                                             request.getPassword()
                                     )
                             )

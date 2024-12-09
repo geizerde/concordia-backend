@@ -1,4 +1,4 @@
-package ru.sirius.concordia.user.model;
+package ru.sirius.concordia.user.model.location;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,24 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "countries")
 @Data
-@Table(name = "roles")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+public class Country {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true)
-    private Code code;
-
-    public enum Code {
-        ROLE_ADMIN, ROLE_USER;
-    }
 }

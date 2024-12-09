@@ -8,23 +8,30 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "roles")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+@Table(name = "photos")
+public class Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String path;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true)
-    private Code code;
+    @Column(nullable = false)
+    private Boolean isAvatar;
 
-    public enum Code {
-        ROLE_ADMIN, ROLE_USER;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @PrePersist
+    public void prePersist() {
+        if (isAvatar == null) {
+            isAvatar = true;
+        }
     }
 }
+

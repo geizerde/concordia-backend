@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.sirius.concordia.user.model.Role;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleDTO {
+public class TagDTO {
     private Long id;
 
     private String name;
-
-    private Role.Code code;
 }
