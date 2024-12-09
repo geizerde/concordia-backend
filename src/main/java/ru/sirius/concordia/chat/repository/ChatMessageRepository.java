@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
-    int countBySenderIdAndRecipientIdAndStatus(
+    Long countBySenderIdAndRecipientIdAndStatus(
             String senderId,
             String recipientId,
             MessageStatus status
