@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.service;
 
+import lombok.AllArgsConstructor;
 import ru.sirius.concordia.chat.exception.ResourceNotFoundException;
 import ru.sirius.concordia.chat.model.ChatMessage;
 import ru.sirius.concordia.chat.model.MessageStatus;
@@ -16,10 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ChatMessageService {
-    @Autowired private ChatMessageRepository repository;
-    @Autowired private ChatRoomService chatRoomService;
-    @Autowired private MongoOperations mongoOperations;
+    private final ChatMessageRepository repository;
+
+    private final ChatRoomService chatRoomService;
+
+    private final MongoOperations mongoOperations;
 
     public ChatMessage save(ChatMessage chatMessage) {
         chatMessage.setStatus(MessageStatus.RECEIVED);
@@ -28,8 +32,8 @@ public class ChatMessageService {
     }
 
     public CountDTO countNewMessages(
-            String senderId,
-            String recipientId
+            Long senderId,
+            Long recipientId
     ) {
         return CountDTO.builder()
                 .count(
@@ -42,16 +46,24 @@ public class ChatMessageService {
     }
 
     public List<ChatMessage> findChatMessages(
-            String senderId,
-            String recipientId
+            Long senderId,
+            Long recipientId
     ) {
-        var chatId = chatRoomService.getChatId(senderId, recipientId, false);
+        var chatId = chatRoomService.getChatId(
+                senderId,
+                recipientId,
+                false
+        );
 
         var messages =
                 chatId.map(cId -> repository.findByChatId(cId)).orElse(new ArrayList<>());
 
         if(!messages.isEmpty()) {
-            updateStatuses(senderId, recipientId, MessageStatus.DELIVERED);
+            updateStatuses(
+                    senderId,
+                    recipientId,
+                    MessageStatus.DELIVERED
+            );
         }
 
         return messages;
@@ -69,8 +81,8 @@ public class ChatMessageService {
     }
 
     public void updateStatuses(
-            String senderId,
-            String recipientId,
+            Long senderId,
+            Long recipientId,
             MessageStatus status
     ) {
         Query query = new Query(

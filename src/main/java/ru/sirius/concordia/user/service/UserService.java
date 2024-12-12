@@ -67,5 +67,11 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
+
+    public String findEmailById(Long id) {
+        return userRepository.findEmailById(id).orElseThrow(
+                () -> new RuntimeException("Email is not found by user id")
+        );
+    }
 }
 

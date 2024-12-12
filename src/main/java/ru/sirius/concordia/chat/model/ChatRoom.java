@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ChatRoom {
     @Id
     private String id;
+
+    @JsonProperty("chat_id")
     private String chatId;
-    private String senderId;
-    private String recipientId;
+
+    @JsonProperty("sender_id")
+    private Long senderId;
+
+    @JsonProperty("recipient_name")
+    private Long recipientId;
 }

@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChatNotification {
     private String id;
-    private String senderId;
+
+    @JsonProperty("sender_id")
+    private Long senderId;
+
+    @JsonProperty("sender_name")
     private String senderName;
 }

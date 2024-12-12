@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +20,22 @@ import ru.sirius.concordia.core.model.dto.data.CountDTO;
 import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
+import ru.sirius.concordia.user.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
 
 @Controller
+@AllArgsConstructor
 public class ChatController {
 
-    @Autowired private SimpMessagingTemplate messagingTemplate;
-    @Autowired private ChatMessageService chatMessageService;
-    @Autowired private ChatRoomService chatRoomService;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    private final ChatMessageService chatMessageService;
+
+    private final ChatRoomService chatRoomService;
+
+    private final UserService userService;
 
     @MessageMapping("/chat")
     public void processMessage(
@@ -40,7 +47,6 @@ public class ChatController {
                         ((UserAuthenticationToken) principal)
                                 .getPrincipal()
                                 .getUserId()
-                                .toString()
                 )
         ) {
             throw new AccessDeniedException("You are not authorized to send messages to this recipient.");
@@ -57,7 +63,9 @@ public class ChatController {
         ChatMessage saved = chatMessageService.save(chatMessage);
 
         messagingTemplate.convertAndSendToUser(
-                chatMessage.getRecipientId(),
+                userService.findEmailById(
+                        chatMessage.getRecipientId()
+                ),
                 "/queue/messages",
                 new ChatNotification(
                         saved.getId(),
@@ -69,8 +77,8 @@ public class ChatController {
 
     @GetMapping("/messages/{senderId}/{recipientId}/count")
     public ResponseEntity<ResponseDTOInterface> countNewMessages(
-            @PathVariable String senderId,
-            @PathVariable String recipientId
+            @PathVariable Long senderId,
+            @PathVariable Long recipientId
     ) {
         try {
             return ResponseEntity.ok(
@@ -95,8 +103,8 @@ public class ChatController {
 
     @GetMapping("/messages/{senderId}/{recipientId}")
     public ResponseEntity<ResponseDTOInterface> findChatMessages (
-            @PathVariable String senderId,
-            @PathVariable String recipientId
+            @PathVariable Long senderId,
+            @PathVariable Long recipientId
     ) {
         try {
             return ResponseEntity.ok(
