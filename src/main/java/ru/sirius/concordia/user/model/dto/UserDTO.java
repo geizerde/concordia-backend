@@ -21,7 +21,7 @@ public class UserDTO {
 
     protected String name;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     protected String password;
 
     protected String email;
