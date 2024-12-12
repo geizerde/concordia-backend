@@ -24,33 +24,6 @@ public class UserController {
 
     private final ModelMapper modelMapper;
 
-    @PostMapping
-    public ResponseEntity<ResponseDTOInterface> create(
-            @RequestBody UserDTO userDTO
-    ) {
-        try {
-            return ResponseEntity.ok(
-                    SuccessResponseDTO.<UserDTO>builder()
-                            .data(
-                                    modelMapper.map(
-                                            userService.create(
-                                                    userDTO
-                                            ),
-                                            UserDTO.class
-                                    )
-                            )
-                            .build()
-            );
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    FailResponseDTO.builder()
-                            .message(e.getMessage())
-                            .build(),
-                    HttpStatus.FORBIDDEN
-            );
-        }
-    }
-
     @GetMapping("/tags")
     public ResponseEntity<ResponseDTOInterface> getTagsByUserId(
             Principal principal
