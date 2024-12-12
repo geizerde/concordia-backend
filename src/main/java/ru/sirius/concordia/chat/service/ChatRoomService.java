@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.service;
 
+import lombok.AllArgsConstructor;
 import ru.sirius.concordia.chat.model.ChatRoom;
 import ru.sirius.concordia.chat.repository.ChatRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +9,14 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ChatRoomService {
 
-    @Autowired private ChatRoomRepository chatRoomRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public Optional<String> getChatId(
-            String senderId,
-            String recipientId,
+            Long senderId,
+            Long recipientId,
             boolean createNewRoomIfNotExists
     ) {
         return chatRoomRepository
@@ -31,8 +33,8 @@ public class ChatRoomService {
     }
 
     private String createChatId(
-            String senderId,
-            String recipientId
+            Long senderId,
+            Long recipientId
     ) {
         var chatId = String.format("%s_%s", senderId, recipientId);
 
