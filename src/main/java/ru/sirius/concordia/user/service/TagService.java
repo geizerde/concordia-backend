@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagService {
     private final TagRepositoryInterface tagRepository;
+
     private final UserRepositoryInterface userRepository;
 
     public List<Tag> getAllTags() {
