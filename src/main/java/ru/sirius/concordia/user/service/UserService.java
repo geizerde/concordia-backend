@@ -73,5 +73,13 @@ public class UserService {
                 () -> new RuntimeException("Email is not found by user id")
         );
     }
+
+    public List<User> getUsersByIds(List<Long> ids) {
+        return userRepository.findAllById(ids);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
 
