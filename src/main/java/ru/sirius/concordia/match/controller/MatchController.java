@@ -10,7 +10,7 @@ import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
 import ru.sirius.concordia.match.model.dto.MatchDTO;
-import ru.sirius.concordia.match.model.dto.MatchesForUserRequestDTO;
+import ru.sirius.concordia.match.model.dto.request.MatchesForUserRequestDTO;
 import ru.sirius.concordia.match.service.MatchService;
 import ru.sirius.concordia.user.model.dto.UserDTO;
 

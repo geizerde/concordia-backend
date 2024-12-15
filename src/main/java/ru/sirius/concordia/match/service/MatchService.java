@@ -3,7 +3,7 @@ package ru.sirius.concordia.match.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.sirius.concordia.match.ml.java.SimilarUsersHandler;
+import ru.sirius.concordia.match.ml.SimilarUsersHandler;
 import ru.sirius.concordia.match.model.Match;
 import ru.sirius.concordia.match.model.dto.MatchDTO;
 import ru.sirius.concordia.match.repository.MatchRepository;

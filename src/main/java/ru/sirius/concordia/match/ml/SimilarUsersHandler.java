@@ -1,4 +1,4 @@
-package ru.sirius.concordia.match.ml.java;
+package ru.sirius.concordia.match.ml;
 
 import lombok.AllArgsConstructor;
 import ru.sirius.concordia.match.config.MlConfig;

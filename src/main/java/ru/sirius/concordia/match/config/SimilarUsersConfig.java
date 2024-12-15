@@ -3,7 +3,7 @@ package ru.sirius.concordia.match.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.sirius.concordia.match.ml.java.SimilarUsersHandler;
+import ru.sirius.concordia.match.ml.SimilarUsersHandler;
 
 @Configuration
 @AllArgsConstructor

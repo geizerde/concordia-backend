@@ -1,4 +1,4 @@
-package ru.sirius.concordia.match.model.dto;
+package ru.sirius.concordia.match.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
