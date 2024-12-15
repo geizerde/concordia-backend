@@ -1,6 +1,7 @@
 package ru.sirius.concordia.match.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.sirius.concordia.match.ml.java.SimilarUsersHandler;
 import ru.sirius.concordia.match.model.Match;
@@ -32,12 +33,12 @@ public class MatchService {
         );
 
         if (match != null) {
-            match.setIsLiked(matchDTO.getLike());
+            match.setIsLiked(matchDTO.getIsLiked());
         } else {
             match = Match.builder()
                     .sender(sender)
                     .receiver(receiver)
-                    .isLiked(matchDTO.getLike())
+                    .isLiked(matchDTO.getIsLiked())
                     .build();
         }
 
@@ -61,5 +62,15 @@ public class MatchService {
                 .collect(Collectors.toList());
 
        return userService.getUsersByIds(similarUserIds);
+    }
+
+    public List<User> getLastedMatchesBySenderId(
+            Long senderId,
+            int limit
+    ) {
+        return matchRepository.findMatchesBySenderId(
+                senderId,
+                PageRequest.of(0, limit)
+        );
     }
 }

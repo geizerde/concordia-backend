@@ -2,6 +2,7 @@ ml:
   knn:
     path-to-script: src\main\java\ru\sirius\concordia\match\ml\KNN\ml.py
     path-to-users-csv: src\main\java\ru\sirius\concordia\match\ml\KNN\output.csv
+    schedule-generate-user-tags-csv: 0 0/10 * * * ?
 
 photo:
   storage:

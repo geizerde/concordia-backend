@@ -9,12 +9,10 @@ import ru.sirius.concordia.auth.model.security.rule.UserAuthenticationToken;
 import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
-import ru.sirius.concordia.match.ml.java.SimilarUsersHandler;
 import ru.sirius.concordia.match.model.dto.MatchDTO;
 import ru.sirius.concordia.match.model.dto.MatchesForUserRequestDTO;
 import ru.sirius.concordia.match.service.MatchService;
 import ru.sirius.concordia.user.model.dto.UserDTO;
-import ru.sirius.concordia.user.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
@@ -25,11 +23,7 @@ import java.util.List;
 public class MatchController {
     private final MatchService matchService;
 
-    private final UserService userService;
-
     private final ModelMapper modelMapper;
-
-    private final SimilarUsersHandler similarUsersHandler;
 
     @PostMapping
     public ResponseEntity<ResponseDTOInterface> createOrUpdateMatch(
@@ -58,11 +52,39 @@ public class MatchController {
         }
     }
 
-    @GetMapping("/test")
-    public void getSimilarUsers() {
-        similarUsersHandler.generateCsv(
-                userService.getAllUsers()
-        );
+    @GetMapping("/last/{count}")
+    public ResponseEntity<ResponseDTOInterface> createOrUpdateMatch(
+            @PathVariable int count,
+            Principal principal
+    ) {
+        try {
+            return ResponseEntity.ok(
+                    SuccessResponseDTO.<List<UserDTO>>builder()
+                            .data(
+                                    matchService.getLastedMatchesBySenderId(
+                                            ((UserAuthenticationToken) principal)
+                                                    .getPrincipal()
+                                                    .getUserId(),
+                                            count
+                                    ).stream()
+                                            .map(
+                                                    user -> modelMapper.map(
+                                                            user,
+                                                            UserDTO.class
+                                                    )
+                                            )
+                                            .toList()
+                            )
+                            .build()
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    FailResponseDTO.builder()
+                            .message(e.getMessage())
+                            .build(),
+                    HttpStatus.FORBIDDEN
+            );
+        }
     }
 
     @GetMapping

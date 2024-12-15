@@ -1,5 +1,6 @@
 package ru.sirius.concordia.match.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class MatchDTO {
 
     private UserDTO receiver;
 
-    private Boolean like;
+    @JsonProperty("is_liked")
+    private Boolean isLiked;
 }
 

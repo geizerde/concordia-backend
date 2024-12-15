@@ -12,7 +12,5 @@ public class MlConfig {
 
     private String pathToUsersCsv;
 
-    private Long countNeighbors;
-
-    private Double mutationChance;
+    private String ScheduleGenerateUserTagsCsv;
 }
