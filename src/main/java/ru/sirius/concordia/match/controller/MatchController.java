@@ -27,9 +27,20 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<ResponseDTOInterface> createOrUpdateMatch(
-            @RequestBody MatchDTO matchDto
+            @RequestBody MatchDTO matchDto,
+            Principal principal
     ) {
         try {
+            matchDto.setSender(
+                    UserDTO.builder()
+                            .id(
+                                    ((UserAuthenticationToken) principal)
+                                            .getPrincipal()
+                                            .getUserId()
+                            ).build()
+            );
+
+
             return ResponseEntity.ok(
                     SuccessResponseDTO.<MatchDTO>builder()
                             .data(

@@ -1,5 +1,6 @@
 package ru.sirius.concordia.match.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,7 @@ import ru.sirius.concordia.user.model.dto.UserDTO;
 @NoArgsConstructor
 public class MatchDTO {
 
+    @JsonIgnore
     private UserDTO sender;
 
     private UserDTO receiver;
