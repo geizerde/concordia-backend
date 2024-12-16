@@ -19,30 +19,36 @@ public interface MatchRepositoryInterface extends JpaRepository<Match, Long> {
 
     List<Match> findByReceiverIdAndIsLiked(Long receiverId, Boolean isLiked);
 
-    @Query("SELECT m.receiver.id FROM Match m WHERE m.sender.id = :senderId AND m.isLiked = :isLiked")
-    List<Long> findReceiverIdsBySenderIdAndIsLiked(
-            @Param("senderId") Long senderId,
-            @Param("isLiked") Boolean isLiked
-    );
-
     @Query("SELECT m.receiver FROM Match m WHERE m.sender.id = :senderId ORDER BY m.updatedAt DESC")
     List<User> findMatchesBySenderId(Long senderId, Pageable pageable);
 
-    @Query("SELECT m.sender.id " +
-            "FROM Match m " +
-            "WHERE m.receiver.id = :userId " +
-            "AND m.isLiked = true " +
-            "AND NOT EXISTS (" +
-            "   SELECT 1 FROM Match r " +
-            "   WHERE r.sender.id = :userId " +
-            "   AND r.receiver.id = m.sender.id " +
-            "   AND r.isLiked = false " +
-            "   AND r.createdAt >= :daysAgo" +
+    @Query("SELECT u.id " +
+            "FROM User u " +
+            "WHERE u.id <> :userId " +
+            "AND u.id NOT IN ( " +
+            "   SELECT m.receiver.id " +
+            "   FROM Match m " +
+            "   WHERE m.sender.id = :userId " +
+            "     AND m.isLiked = false " +
+            "     AND m.updatedAt >= :thresholdDate " +
             ") " +
-            "AND m.createdAt >= :daysAgo")
-    List<Long> findLikedUsersWithinDaysAgo(
+            "AND u.id NOT IN ( " +
+            "   SELECT m.sender.id " +
+            "   FROM Match m " +
+            "   WHERE m.receiver.id = :userId " +
+            "     AND m.isLiked = true " +
+            ") " +
+            "ORDER BY " +
+            "   CASE WHEN u.id IN ( " +
+            "       SELECT m.sender.id " +
+            "       FROM Match m " +
+            "       WHERE m.receiver.id = :userId " +
+            "         AND m.isLiked = true " +
+            "   ) THEN 1 ELSE 2 END, u.id ASC " +
+            "LIMIT :limit")
+    List<Long> findAvailableUserIds(
             @Param("userId") Long userId,
-            @Param("daysAgo") LocalDateTime daysAgo
+            @Param("thresholdDate") LocalDateTime thresholdDate,
+            @Param("limit") Long limit
     );
-
 }

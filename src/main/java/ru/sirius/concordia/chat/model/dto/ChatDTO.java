@@ -1,5 +1,6 @@
 package ru.sirius.concordia.chat.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,6 @@ import ru.sirius.concordia.user.model.dto.UserDTO;
 public class ChatDTO {
     private UserDTO user;
 
+    @JsonProperty("last_message")
     private ChatMessage lastMessage;
 }
