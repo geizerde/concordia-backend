@@ -3,6 +3,7 @@ package ru.sirius.concordia.match.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.sirius.concordia.match.config.DatingConfig;
 import ru.sirius.concordia.match.ml.SimilarUsersHandler;
 import ru.sirius.concordia.match.model.Match;
 import ru.sirius.concordia.match.model.dto.MatchDTO;
@@ -10,8 +11,8 @@ import ru.sirius.concordia.match.repository.MatchRepositoryInterface;
 import ru.sirius.concordia.user.model.User;
 import ru.sirius.concordia.user.service.UserService;
 
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +23,8 @@ public class MatchService {
     private final UserService userService;
 
     private final SimilarUsersHandler similarUsersHandler;
+
+    private final DatingConfig datingConfig;
 
     public Match createOrUpdateMatch(MatchDTO matchDTO) {
         User sender = userService.getUserById(matchDTO.getSender().getId());
@@ -50,18 +53,40 @@ public class MatchService {
             Long countNeighbors,
             Double mutationChance
     ) {
-        Map<Integer, Double> res = similarUsersHandler.findSimilarUsers(
-                userId,
-                countNeighbors,
-                mutationChance
+        List<Long> recentInterestedUserIds = this.getRecentInterestedUserIds(
+                userId
         );
 
-        List<Long> similarUserIds = res.keySet().stream()
+        List<Long> rejectedLikersIds = matchRepository.findReceiverIdsBySenderIdAndIsLiked(
+                userId,
+                false
+        );
+
+        long remainingCount = countNeighbors - recentInterestedUserIds.size();
+
+        Map<Integer, Double> similarUsers = remainingCount > 0
+                ? similarUsersHandler.findSimilarUsers(userId, remainingCount, mutationChance)
+                : Collections.emptyMap();
+
+        Set<Long> combinedUserIds = new LinkedHashSet<>();
+
+        combinedUserIds.addAll(
+                recentInterestedUserIds
+        );
+
+        similarUsers.keySet().stream()
                 .map(Long::valueOf)
                 .filter(id -> !id.equals(userId))
+                .filter(id -> !rejectedLikersIds.contains(id))
+                .forEach(combinedUserIds::add);
+
+        List<Long> finalUserIds = combinedUserIds.stream()
+                .limit(countNeighbors)
                 .collect(Collectors.toList());
 
-       return userService.getUsersByIds(similarUserIds);
+        return userService.getUsersByIds(
+                finalUserIds
+        );
     }
 
     public List<User> getLastedMatchesBySenderId(
@@ -91,6 +116,15 @@ public class MatchService {
         return matchRepository.findByReceiverIdAndIsLiked(
                 receiverId,
                 isLiked
+        );
+    }
+
+    public List<Long> getRecentInterestedUserIds(Long userId) {
+        return matchRepository.findLikedUsersWithinDaysAgo(
+                userId,
+                LocalDateTime.now().minusDays(
+                        datingConfig.getMatchCooldown()
+                )
         );
     }
 }
