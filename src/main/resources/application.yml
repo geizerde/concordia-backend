@@ -1,3 +1,6 @@
+dating:
+  match-cooldown: 3
+
 ml:
   knn:
     path-to-script: src\main\java\ru\sirius\concordia\match\ml\KNN\ml.py
