@@ -1,9 +1,12 @@
 package ru.sirius.concordia.match.ml;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import ru.sirius.concordia.match.config.MlConfig;
+import ru.sirius.concordia.match.model.dto.UserMatchCoverageDTO;
 import ru.sirius.concordia.user.model.Tag;
 import ru.sirius.concordia.user.model.User;
+import ru.sirius.concordia.user.model.dto.UserDTO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,10 +15,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class SimilarUsersHandler {
@@ -23,10 +24,50 @@ public class SimilarUsersHandler {
 
     private final MlConfig mlConfig;
 
-    public Map<Integer, Double> findSimilarUsers(
-            Long userId,
+    private final ModelMapper modelMapper;
+
+    public List<UserMatchCoverageDTO> handle(
+            User currentUser,
+            List<User> users,
             Long countNeighbors,
             Double mutationChance
+    ) {
+        try {
+            Path pathToUserFile = this.generateCsv(
+                    currentUser,
+                    users
+            );
+
+            Map<Integer, Double> similarUsers = this.findSimilarUsers(
+                    currentUser.getId(),
+                    countNeighbors,
+                    mutationChance,
+                    pathToUserFile
+            );
+
+            Files.deleteIfExists(pathToUserFile);
+
+            return users.stream()
+                    .map(user -> {
+                        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+                        Double coverage = similarUsers.getOrDefault(
+                                user.getId().intValue(),
+                                null
+                        );
+
+                        return new UserMatchCoverageDTO(userDTO, coverage);
+                    })
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Map<Integer, Double> findSimilarUsers(
+            Long userId,
+            Long countNeighbors,
+            Double mutationChance,
+            Path pathToUserFile
     ) {
         Map<Integer, Double> userSimilarityMap = new HashMap<>();
 
@@ -36,7 +77,7 @@ public class SimilarUsersHandler {
                 String.valueOf(userId),
                 String.valueOf(countNeighbors),
                 String.valueOf(mutationChance),
-                mlConfig.getPathToUsersCsv()
+                pathToUserFile.toAbsolutePath().toString()
         );
 
         processBuilder.redirectErrorStream(true);
@@ -78,8 +119,12 @@ public class SimilarUsersHandler {
         }
     }
 
-    public void generateCsv(List<User> users) {
-        Path path = Paths.get(mlConfig.getPathToUsersCsv());
+    public Path generateCsv(
+            User currentUser,
+            List<User> users
+    ) {
+        String fileName = currentUser.getId() + ".csv";
+        Path path = Paths.get(mlConfig.getPathToUsersCsv(), fileName);
 
         try {
             Files.deleteIfExists(path);
@@ -87,10 +132,16 @@ public class SimilarUsersHandler {
             System.err.println("Error deleting existing CSV file: " + e.getMessage());
         }
 
+        List<User> userListCopy = new ArrayList<>(users);
+
+        if (!userListCopy.contains(currentUser)) {
+            userListCopy.addFirst(currentUser);
+        }
+
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write("ID,age,interests\n");
 
-            for (User user : users) {
+            for (User user : userListCopy) {
                 StringJoiner interestsJoiner = new StringJoiner(", ");
                 List<Tag> tags = user.getTags();
 
@@ -112,8 +163,10 @@ public class SimilarUsersHandler {
             }
 
             System.out.println("CSV file generated successfully at: " + path);
+            return path;
         } catch (IOException e) {
             System.err.println("Error generating CSV file: " + e.getMessage());
+            return null;
         }
     }
 }

@@ -10,6 +10,7 @@ import ru.sirius.concordia.core.model.dto.response.FailResponseDTO;
 import ru.sirius.concordia.core.model.dto.response.ResponseDTOInterface;
 import ru.sirius.concordia.core.model.dto.response.SuccessResponseDTO;
 import ru.sirius.concordia.match.model.dto.MatchDTO;
+import ru.sirius.concordia.match.model.dto.UserMatchCoverageDTO;
 import ru.sirius.concordia.match.model.dto.request.MatchesForUserRequestDTO;
 import ru.sirius.concordia.match.service.MatchService;
 import ru.sirius.concordia.user.model.dto.UserDTO;
@@ -105,23 +106,15 @@ public class MatchController {
     ) {
         try {
             return ResponseEntity.ok(
-                    SuccessResponseDTO.<List<UserDTO>>builder()
+                    SuccessResponseDTO.<List<UserMatchCoverageDTO>>builder()
                             .data(
                                     matchService.getSimilarUsers(
                                             ((UserAuthenticationToken) principal)
                                                     .getPrincipal()
                                                     .getUserId(),
-                                                    matchesForUserRequestDTO.getCountNeighbors(),
-                                                    matchesForUserRequestDTO.getMutationChance()
-                                            )
-                                            .stream()
-                                            .map(
-                                                    user -> modelMapper.map(
-                                                            user,
-                                                            UserDTO.class
-                                                    )
-                                            )
-                                            .toList()
+                                            matchesForUserRequestDTO.getCountNeighbors(),
+                                            matchesForUserRequestDTO.getMutationChance()
+                                    )
                             )
                             .build()
             );

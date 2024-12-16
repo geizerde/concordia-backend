@@ -28,6 +28,8 @@ class UserProfile:
             features = self.df.columns.tolist()
             features.remove('ID')  # Исключаем ID из признаков
 
+        count_neighbors = min(len(self.df), count_neighbors)
+
         # Применение KNN для нахождения ближайших соседей
         knn = NearestNeighbors(n_neighbors=count_neighbors, metric='cosine')
         knn.fit(self.df[features])  # Используем только выбранные признаки
