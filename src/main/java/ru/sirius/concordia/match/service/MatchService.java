@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.sirius.concordia.match.ml.SimilarUsersHandler;
 import ru.sirius.concordia.match.model.Match;
 import ru.sirius.concordia.match.model.dto.MatchDTO;
-import ru.sirius.concordia.match.repository.MatchRepository;
+import ru.sirius.concordia.match.repository.MatchRepositoryInterface;
 import ru.sirius.concordia.user.model.User;
 import ru.sirius.concordia.user.service.UserService;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MatchService {
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryInterface matchRepository;
 
     private final UserService userService;
 
@@ -71,6 +71,26 @@ public class MatchService {
         return matchRepository.findMatchesBySenderId(
                 senderId,
                 PageRequest.of(0, limit)
+        );
+    }
+
+    public List<Match> getMatchesBySenderIdAndIsLiked(
+            Long senderId,
+            Boolean isLiked
+    ) {
+        return matchRepository.findBySenderIdAndIsLiked(
+                senderId,
+                isLiked
+        );
+    }
+
+    public List<Match> getMatchesByReceiverIdAndIsLiked(
+            Long receiverId,
+            Boolean isLiked
+    ) {
+        return matchRepository.findByReceiverIdAndIsLiked(
+                receiverId,
+                isLiked
         );
     }
 }

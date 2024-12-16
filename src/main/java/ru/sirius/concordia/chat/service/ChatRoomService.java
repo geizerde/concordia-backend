@@ -36,7 +36,11 @@ public class ChatRoomService {
             Long senderId,
             Long recipientId
     ) {
-        var chatId = String.format("%s_%s", senderId, recipientId);
+        var chatId = String.format(
+                "%s_%s",
+                Math.min(senderId, recipientId),
+                Math.max(senderId, recipientId)
+        );
 
         ChatRoom senderRecipient = ChatRoom
                 .builder()

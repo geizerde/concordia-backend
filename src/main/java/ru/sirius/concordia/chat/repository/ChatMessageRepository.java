@@ -5,6 +5,7 @@ import ru.sirius.concordia.chat.model.MessageStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
@@ -13,4 +14,6 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     );
 
     List<ChatMessage> findByChatId(String chatId);
+
+    Optional<ChatMessage> findTopByChatIdOrderByTimestampDesc(String chatId);
 }

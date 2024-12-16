@@ -102,4 +102,9 @@ public class ChatMessageService {
                 ChatMessage.class
         );
     }
+
+    public ChatMessage findLastMessageInChat(String chatId) {
+        return repository.findTopByChatIdOrderByTimestampDesc(chatId)
+                .orElse(null);
+    }
 }
