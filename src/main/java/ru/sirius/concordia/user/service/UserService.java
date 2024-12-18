@@ -37,6 +37,7 @@ public class UserService {
                 .phone(userDTO.getPhone())
                 .email(userDTO.getEmail())
                 .age(userDTO.getAge())
+                .description(userDTO.getDescription())
                 .city(
                         cityService.findById(
                                 userDTO.getCity().getId()
