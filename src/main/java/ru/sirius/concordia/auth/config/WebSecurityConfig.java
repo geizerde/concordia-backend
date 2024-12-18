@@ -35,6 +35,9 @@ public class WebSecurityConfig {
                 authorizeHttpRequests(
                         (authorize) -> authorize
                                 .requestMatchers("/ws/**").permitAll()
+                                .requestMatchers("/api/tags").permitAll()
+                                .requestMatchers("/api/locations/**").permitAll()
+                                .requestMatchers("/uploads/users/**").permitAll()
                                 .requestMatchers("/index.html").permitAll()
                                 .requestMatchers("/index1.html").permitAll()
                                 .requestMatchers("/register").permitAll()
